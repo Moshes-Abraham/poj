@@ -12,6 +12,7 @@ int point_del_pos(char *c, int size)
 	 */
 
 	int pos = -1;
+	int ret;
 	for ( int i = 0; i != size; ++i ) {
 		if ( c[i] == '.' ) {
 			pos = i;
@@ -25,9 +26,10 @@ int point_del_pos(char *c, int size)
 				c[i + 1] = '\0';
 			}
 		}
-		return size - pos - 1;
+		ret = size - pos - 1;
 	} else
-		return 0;
+		ret = 0;
+	return ret;
 }
 
 void hd_multiply(char *a, char *b)
@@ -43,39 +45,24 @@ void hd_multiply(char *a, char *b)
 	int p_a = point_del_pos(a, len_active); 
 	int p_b = point_del_pos(b, len_passive); 
 
-	if ( p_a == 0 ) {
-		for ( int i = 0, j = len_active - 1; i != len_active; ++i, --j ) {
-			n1[i] = a[j] - '0';
-		}
-	} else {
-		for ( int i = 0, j = len_active - 1 - 1; i != len_active - 1; ++i, --j ) {
-			n1[i] = a[j] - '0';
-		}
+	while ( a[0] == '0' ) {
+		a = a + 1;
 	}
-	if ( p_b == 0 ) {
-		for ( int i = 0, j = len_passive - 1; i != len_passive; ++i, --j ) {
-			n2[i] = b[j] - '0';
-		}
-	} else {
-		for ( int i = 0, j = len_passive - 1 - 1; i != len_passive - 1; ++i, --j ) {
-			n2[i] = b[j] - '0';
-		}
+	while ( b[0] == '0' ) {
+		b = b + 1;
 	}
-//	for ( int i = 0, j = len_passive - 1; i != len_passive; ++i, --j ) {
-//		n2[i] = b[j] - '0';
-//	}
-	if ( p_a == 0 && p_b == 0 ) {
-		for ( int i = 0; i != len_active + len_passive; ++i ) {
-			n3[i] = 0;
-		}
-	} else if ( p_a != 0 || p_b != 0 ) {
-		for ( int i = 0; i != len_active + len_passive - 1; ++i ) {
-			n3[i] = 0;
-		}
-	} else {
-		for ( int i = 0; i != len_active + len_passive - 2; ++i ) {
-			n3[i] = 0;
-		}
+
+	len_active = strlen(a);
+	len_passive = strlen(b);
+
+	for ( int i = 0, j = len_active - 1; i != len_active; ++i, --j ) {
+		n1[i] = a[j] - '0';
+	}
+	for ( int i = 0, j = len_passive - 1; i != len_passive; ++i, --j ) {
+		n2[i] = b[j] - '0';
+	}
+	for ( int i = 0; i != len_active + len_passive; ++i ) {
+		n3[i] = 0;
 	}
 	for ( int i = 0; i != len_active; ++i ) {
 		for ( int j = 0; j != len_active; ++j ) {
@@ -89,16 +76,7 @@ void hd_multiply(char *a, char *b)
 			n3[i + 1] += tmp / 10;
 		}
 	}
-	if ( p_a != 0 && p_b != 0 ) {
-		for ( int i = p_a; i != len_active + len_passive; ++i ) {
-			if ( i == p_a ) {
-				n3[i + 1] = n3[i];
-				n3[i] = '.';
-			} else {
-				n3[i + 1] = n3[i];
-			}
-		}
-	}
+
 	if ( n3[len_active + len_passive - 1] == 0 ) {
 		for ( int i = 0, j = len_active + len_passive - 2; i != len_active + len_passive - 1; ++i, --j ) {
 			printf("%d", n3[j]);
@@ -122,8 +100,6 @@ int main()
 
 	while ( scanf("%s%s", s, n) == 2 ) {
 		hd_multiply(s,n);
-		if ( *s == 'q' )
-			exit(0);
 	}
 	return 0;
 }
